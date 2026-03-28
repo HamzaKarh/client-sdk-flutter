@@ -69,7 +69,6 @@ const defaultRetryDelaysInMs = [
 class Engine extends Disposable with EventsEmittable<EngineEvent> {
   static const _lossyDCLabel = '_lossy';
   static const _reliableDCLabel = '_reliable';
-  @internal
   final SignalClient signalClient;
 
   final PeerConnectionCreate _peerConnectionCreate;

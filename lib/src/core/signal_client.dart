@@ -454,7 +454,7 @@ extension SignalClientRequests on SignalClient {
         ),
       );
 
-  @internal
+  /// Send a mute/unmute signal for a track to the SFU.
   void sendMuteTrack(String trackSid, bool muted) => _sendRequest(lk_rtc.SignalRequest(
         mute: lk_rtc.MuteTrackRequest(
           sid: trackSid,

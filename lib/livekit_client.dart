@@ -46,6 +46,7 @@ export 'src/preconnect/pre_connect_audio_buffer.dart';
 export 'src/publication/local.dart';
 export 'src/publication/remote.dart';
 export 'src/publication/track_publication.dart';
+export 'src/support/native.dart' show Native;
 export 'src/support/platform.dart';
 export 'src/track/audio_visualizer.dart';
 export 'src/track/local/audio.dart';

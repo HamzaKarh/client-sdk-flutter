@@ -72,6 +72,12 @@ class Room extends DisposableChangeNotifier with EventsEmittable<RoomEvent> {
   ConnectOptions get connectOptions => engine.connectOptions;
   RoomOptions get roomOptions => engine.roomOptions;
 
+  /// Send a mute/unmute signal for a track to the SFU without affecting
+  /// the local audio device. Useful for noise gate implementations.
+  void sendTrackMuteSignal(String trackSid, bool muted) {
+    engine.signalClient.sendMuteTrack(trackSid, muted);
+  }
+
   final ParticipantCollection<RemoteParticipant> _remoteParticipants = ParticipantCollection();
   UnmodifiableMapView<String, RemoteParticipant> get remoteParticipants =>
       UnmodifiableMapView(_remoteParticipants.byIdentity);

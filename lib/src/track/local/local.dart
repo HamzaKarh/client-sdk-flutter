@@ -68,10 +68,10 @@ mixin AudioTrack on Track {
   /// Multiple renderers with different [options] each get their own capture
   /// pipeline. Renderers sharing the same options share a single capture.
   ///
-  /// Returns a function that, when called, removes this renderer.
-  /// When the last renderer for a given options config is removed, that
-  /// capture stops automatically.
-  CancelListenFunc addAudioRenderer({
+  /// Returns a record with:
+  /// - `cancel`: function to remove this renderer
+  /// - `rendererId`: the native renderer ID (for use with [Native.setNoiseGate])
+  ({CancelListenFunc cancel, Future<String?> rendererId}) addAudioRendererWithId({
     required AudioFrameCallback onFrame,
     AudioRendererOptions options = const AudioRendererOptions(),
   }) {
@@ -81,13 +81,29 @@ mixin AudioTrack on Track {
     );
     group.renderers.add(onFrame);
 
-    return () async {
+    final cancel = () async {
       group.renderers.remove(onFrame);
       if (group.renderers.isEmpty) {
         _captureGroups.remove(options);
         await group.stop();
       }
     };
+
+    final rendererIdFuture = group._startFuture.then((_) => group.rendererId);
+
+    return (cancel: cancel, rendererId: rendererIdFuture);
+  }
+
+  /// Register a callback to receive raw PCM audio frames from this track.
+  ///
+  /// Returns a function that, when called, removes this renderer.
+  /// When the last renderer for a given options config is removed, that
+  /// capture stops automatically.
+  CancelListenFunc addAudioRenderer({
+    required AudioFrameCallback onFrame,
+    AudioRendererOptions options = const AudioRendererOptions(),
+  }) {
+    return addAudioRendererWithId(onFrame: onFrame, options: options).cancel;
   }
 
   @override
@@ -110,6 +126,7 @@ class _AudioCaptureGroup {
   late final Future<void> _startFuture;
   AudioFrameCapture? _capture;
   StreamSubscription? _subscription;
+  String? rendererId;
 
   _AudioCaptureGroup({
     required rtc.MediaStreamTrack track,
@@ -121,10 +138,12 @@ class _AudioCaptureGroup {
   Future<void> _start(rtc.MediaStreamTrack track, AudioRendererOptions options) async {
     final capture = createAudioFrameCapture();
     _capture = capture;
+    final id = Track.uuid.v4();
+    rendererId = id;
 
     final result = await capture.start(
       track: track,
-      rendererId: Track.uuid.v4(),
+      rendererId: id,
       sampleRate: options.sampleRate,
       channels: options.channels,
       format: options.format,

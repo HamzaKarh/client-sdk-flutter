@@ -129,6 +129,31 @@ class Native {
     }
   }
 
+  /// Apply a noise gate to the audio renderer identified by [rendererId].
+  ///
+  /// The gate silences the track (via SetVolume) when the RMS of PCM frames
+  /// falls below [threshold] for longer than [holdMs] milliseconds.
+  static Future<void> setNoiseGate({
+    required String rendererId,
+    required bool enabled,
+    double threshold = 0.01,
+    int holdMs = 300,
+  }) async {
+    try {
+      await channel.invokeMethod<void>(
+        'setNoiseGate',
+        <String, dynamic>{
+          'rendererId': rendererId,
+          'enabled': enabled,
+          'threshold': threshold,
+          'holdMs': holdMs,
+        },
+      );
+    } catch (error) {
+      logger.warning('setNoiseGate did throw $error');
+    }
+  }
+
   /// Returns OS's version as a string
   /// Currently only for iOS, macOS
   @internal

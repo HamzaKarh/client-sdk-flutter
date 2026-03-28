@@ -14,6 +14,9 @@ set(PLUGIN_NAME "livekit_client_plugin")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(PULSE REQUIRED libpulse-simple)
+
 add_definitions(-D_USE_MATH_DEFINES)
 add_definitions(-DRTC_DESKTOP_DEVICE)
 
@@ -59,8 +62,10 @@ target_compile_definitions(${PLUGIN_NAME} PRIVATE FLUTTER_PLUGIN_IMPL)
 # dependencies here.
 target_include_directories(${PLUGIN_NAME} INTERFACE
   "${CMAKE_CURRENT_SOURCE_DIR}/include")
+target_include_directories(${PLUGIN_NAME} PRIVATE ${PULSE_INCLUDE_DIRS})
 target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_webrtc_plugin)
 target_link_libraries(${PLUGIN_NAME} PRIVATE PkgConfig::GTK)
+target_link_libraries(${PLUGIN_NAME} PRIVATE ${PULSE_LIBRARIES})
 
 # List of absolute paths to libraries that should be bundled with the plugin.
 # This list could contain prebuilt libraries, or libraries created by an
