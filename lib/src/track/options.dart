@@ -146,11 +146,17 @@ class ScreenShareCaptureOptions extends VideoCaptureOptions {
   /// for browser only, include or exclude self browser surface.
   final String? selfBrowserSurface;
 
+  /// Desktop only: ID of the specific audio source to capture.
+  /// null = system audio (captureScreenAudio controls whether to capture).
+  /// non-null = specific app (PA sink input index on Linux, PID string on Windows).
+  final String? audioSourceId;
+
   const ScreenShareCaptureOptions({
     this.useiOSBroadcastExtension = false,
     this.captureScreenAudio = false,
     this.preferCurrentTab = false,
     this.selfBrowserSurface,
+    this.audioSourceId,
     String? sourceId,
     double? maxFrameRate,
     VideoParameters params = VideoParametersPresets.screenShareH1080FPS15,
@@ -161,6 +167,7 @@ class ScreenShareCaptureOptions extends VideoCaptureOptions {
       this.captureScreenAudio = false,
       this.preferCurrentTab = false,
       this.selfBrowserSurface,
+      this.audioSourceId,
       required VideoCaptureOptions captureOptions})
       : super(params: captureOptions.params);
 
@@ -172,6 +179,7 @@ class ScreenShareCaptureOptions extends VideoCaptureOptions {
     double? maxFrameRate,
     bool? preferCurrentTab,
     String? selfBrowserSurface,
+    String? audioSourceId,
   }) =>
       ScreenShareCaptureOptions(
         useiOSBroadcastExtension: useiOSBroadcastExtension ?? this.useiOSBroadcastExtension,
@@ -181,6 +189,7 @@ class ScreenShareCaptureOptions extends VideoCaptureOptions {
         maxFrameRate: maxFrameRate ?? this.maxFrameRate,
         preferCurrentTab: preferCurrentTab ?? this.preferCurrentTab,
         selfBrowserSurface: selfBrowserSurface ?? this.selfBrowserSurface,
+        audioSourceId: audioSourceId ?? this.audioSourceId,
       );
 
   @override

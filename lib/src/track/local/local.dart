@@ -81,13 +81,13 @@ mixin AudioTrack on Track {
     );
     group.renderers.add(onFrame);
 
-    final cancel = () async {
+    Future<void> cancel() async {
       group.renderers.remove(onFrame);
       if (group.renderers.isEmpty) {
         _captureGroups.remove(options);
         await group.stop();
       }
-    };
+    }
 
     final rendererIdFuture = group._startFuture.then((_) => group.rendererId);
 
@@ -263,7 +263,9 @@ abstract class LocalTrack extends Track {
       'audio': options is AudioCaptureOptions
           ? options.toMediaConstraintsMap()
           : options is ScreenShareCaptureOptions
-              ? (options).captureScreenAudio
+              ? (options.audioSourceId != null
+                  ? {'sourceId': options.audioSourceId}
+                  : options.captureScreenAudio)
               : false,
       'video': options is VideoCaptureOptions ? options.toMediaConstraintsMap() : false,
     };
