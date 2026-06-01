@@ -12,6 +12,25 @@
 
 # LiveKit Flutter SDK
 
+> ## Fork notes
+>
+> This is a fork of [livekit/client-sdk-flutter](https://github.com/livekit/client-sdk-flutter) maintained for [Havok](https://github.com/HamzaKarh/havok), a Matrix + LiveKit voice & video client.
+>
+> **Divergence base:** upstream release `v2.7.0` (commit [`8dfaf67`](https://github.com/livekit/client-sdk-flutter/commit/8dfaf67)).
+>
+> **What this fork adds on top of upstream:**
+>
+> - **Native noise gate** — `setNoiseGate(...)` API on `Native`, backed by a C++ implementation in `linux/livekit_plugin.cpp` that gates the local capture stream before it enters the encoder. Lets the host app skip round-tripping audio through Dart on Linux.
+> - **Audio source selection** — `AudioCaptureOptions.deviceId` plumbing in `lib/src/track/options.dart` so the host app can pin a specific input device on desktop.
+>
+> **Maintenance:** held independently; changes are not yet proposed upstream and the API is not guaranteed stable across pulls.
+>
+> **Contact:** open an issue on this repo or on [Havok](https://github.com/HamzaKarh/havok).
+>
+> The remainder of this README is unmodified upstream content.
+
+---
+
 <!--BEGIN_DESCRIPTION-->
 Use this SDK to add realtime video, audio and data features to your Flutter app. By connecting to <a href="https://livekit.io/">LiveKit</a> Cloud or a self-hosted server, you can quickly build applications such as multi-modal AI, live streaming, or video calls with just a few lines of code.
 <!--END_DESCRIPTION-->
